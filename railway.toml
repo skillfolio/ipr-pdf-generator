@@ -3,12 +3,12 @@ builder = "nixpacks"
 
 [build.nixpacksPlan.phases.setup]
 aptPkgs = [
+  "libglib2.0-0",
+  "libgobject-2.0-0",
   "libpango-1.0-0",
   "libpangoft2-1.0-0",
   "libcairo2",
   "libgdk-pixbuf2.0-0",
-  "libgobject-2.0-0",
-  "libglib2.0-0",
   "libharfbuzz0b",
   "libfribidi0",
   "libffi-dev",
