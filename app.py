@@ -56,18 +56,20 @@ def preview_payload(payload):
 
 
 def prepare_html(html: str) -> str:
-    """Strip <head>/<style>/<script> if no <body>; otherwise keep body content
-    and unwrap a single root <div> wrapper (matches ipr-service behaviour)."""
+    """Rebuild a clean HTML document preserving <style> blocks for WeasyPrint."""
     body_match = re.search(r"<body[^>]*>(.*?)</body>", html, re.DOTALL | re.IGNORECASE)
-    content = body_match.group(1) if body_match else html
 
-    if not body_match:
-        content = re.sub(r"<head[^>]*>.*?</head>", "", content, flags=re.DOTALL | re.IGNORECASE)
+    if body_match:
+        content = body_match.group(1)
+        # Preserve all <style> blocks from <head> — WeasyPrint needs them for
+        # colours, borders and backgrounds.
+        styles = "".join(re.findall(r"<style[^>]*>.*?</style>", html, re.DOTALL | re.IGNORECASE))
+    else:
+        content = re.sub(r"<head[^>]*>.*?</head>", "", html, flags=re.DOTALL | re.IGNORECASE)
         content = re.sub(r"<script[^>]*>.*?</script>", "", content, flags=re.DOTALL | re.IGNORECASE)
+        styles = ""
 
-    # Unlike DOCX path, we KEEP <style> blocks for PDF — WeasyPrint honours them.
-
-    return f"<html><head><meta charset='utf-8'></head><body>{content}</body></html>"
+    return f"<html><head><meta charset='utf-8'>{styles}</head><body>{content}</body></html>"
 
 
 def check_auth():

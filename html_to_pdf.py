@@ -29,6 +29,13 @@ _PAGE_CSS = """
     }
 }
 
+/* Force WeasyPrint to render all colours and backgrounds from HTML styles. */
+* {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
 /* Default body typography matches n8n template (Calibri-like fallback). */
 body {
     font-family: "DejaVu Sans", "Liberation Sans", "Calibri", Arial, sans-serif;
@@ -48,6 +55,25 @@ a {
 /* Tables — keep header rows when paginating. */
 thead { display: table-header-group; }
 tr, td, th { page-break-inside: avoid; }
+
+/* overflow-x:auto from the HTML template has no effect in PDF —
+   constrain tables to page width instead. */
+.table-wrap { overflow: visible !important; }
+table {
+    max-width: 100% !important;
+    table-layout: fixed !important;
+}
+td, th {
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+}
+
+/* Shrink font for tables with many columns to prevent right-side clipping. */
+.md-table.wide { font-size: 10px; }
+.md-table.wide td, .md-table.wide th { padding: 4px 5px; }
+
+/* Headings should not be orphaned at bottom of a page. */
+h1, h2, h3, h4 { page-break-after: avoid; }
 """
 
 
